@@ -32,4 +32,35 @@ const hasInvalidInput = (inputList) => {
     })
 };
 
+const disableSubmitButton = (submitButton, inactiveButtonClass) => {
+    submitButton.classList.add(inactiveButtonClass);
+    submitButton.disabled = true;
+}
+
+const enableSubmitButton = (submitButton, inactiveButtonClass) => {
+    submitButton.classList.remove(inactiveButtonClass);
+    submitButton.disabled = false;
+}
+
+const toggleButtonState = (inputList, submitButton, inactiveButtonClass) => {
+  if (hasInvalidInput(inputList)) {
+    disableSubmitButton(submitButton, inactiveButtonClass);
+  } else {
+    enableSubmitButton(submitButton, inactiveButtonClass);
+  }
+}; // Шаманим с кнопкой Z Шаман Россия ZZZ ZOV 
+
+const setEventListeners = (formElement, inputErrorClass,errorClass,submitButton, inactiveButtonClass, inputSelector ) => {
+    const inputList = Array.from(formElement.querySelectorAll(inputSelector));
+    toggleButtonState(inputList, submitButton, inactiveButtonClass); // каждый раз прочекиваем, как говорилось в спринте
+    inputList.forEach((inputElements) => {
+        inputElements.addEventListener('input', () => {
+            checkInputValidity(formElement, inputElements, inputErrorClass, errorClass)
+            toggleButtonState(inputList, submitButton, inactiveButtonClass) // снова чек кнопочки
+        });
+    });
+};
+
+
+
 // тут далее будет часть для ValidationSettings, которые указаны в чек-листе))
