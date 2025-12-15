@@ -1,12 +1,12 @@
 const showInputError = (formElement,inputElement, errorMessage, settings) => {
-    const errorElement = formElement.querySelector(`${inputElement.id}-error`);
+    const errorElement = formElement.querySelector(`#${inputElement.id}-error`);
     inputElement.classList.add(settings.inputErrorClass);
     errorElement.textContent = errorMessage;
     errorElement.classList.add(settings.errorClass);
 } // если чето не так ошибка покажется
 
 const hideInputError = (formElement,inputElement, settings) => {
-    const errorElement = formElement.querySelector(`${inputElement.id}-error`);
+    const errorElement = formElement.querySelector(`#${inputElement.id}-error`);
     inputElement.classList.remove(settings.inputErrorClass);
     errorElement.textContent='';
     errorElement.classList.remove(settings.errorClass);
@@ -58,16 +58,17 @@ const setEventListeners = (formElement, settings ) => {
 };
 
 export const clearValidation = (formElement, settings) => {
-    const inputList = Array.form(formElement.querySelectorAll(settings.inputSelector));
+    const inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
     const submitButton = formElement.querySelector(settings.submitButtonSelector);
     inputList.forEach((inpElement) => {
         hideInputError(formElement, inpElement, settings);
+        inpElement.setCustomValidity('');
     });
     disableSubmitButton(submitButton, settings);
 }
 
 export const enableValidation = (settings) => {
-    const formList = Array.form(formElement.querySelectorAll(settings.formSelector));
+    const formList = Array.from(document.querySelectorAll(settings.formSelector));
     formList.forEach((formElements) => {
         setEventListeners(formElements, settings);
     });
