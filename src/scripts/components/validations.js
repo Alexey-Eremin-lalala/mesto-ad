@@ -1,28 +1,23 @@
-const showInputError = (formElement,inputElement,errorMessage, errorClass,inputErrorClass) => {
+const showInputError = (formElement,inputElement, errorMessage, settings) => {
     const errorElement = formElement.querySelector(`${inputElement.id}-error`);
-    inputElement.classList.add(inputErrorClass);
+    inputElement.classList.add(settings.inputErrorClass);
     errorElement.textContent = errorMessage;
-    errorElement.classList.add(errorClass);
+    errorElement.classList.add(settings.errorClass);
 } // если чето не так ошибка покажется
 
-const hideInputError = (formElement,inputElement, errorClass,inputErrorClass) => {
+const hideInputError = (formElement,inputElement, settings) => {
     const errorElement = formElement.querySelector(`${inputElement.id}-error`);
-    inputElement.classList.remove(inputErrorClass);
+    inputElement.classList.remove(settings.inputErrorClass);
     errorElement.textContent='';
-    errorElement.classList.remove(errorClass);
+    errorElement.classList.remove(settings.errorClass);
 } // прятаем ошибочку
 
-const checkInputValidity = (formElement, inputElement, inputErrorClass, errorClass) => {
-  if (inputElement.validity.patternMismatch) {
-    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
-  } else {
-    inputElement.setCustomValidity("");
-  }
-
+const checkInputValidity = (formElement, inputElement, settings) => {
   if (!inputElement.validity.valid) {
-    showInputError(formElement, inputElement, inputErrorClass, inputElement.validationMessage, errorClass);
+    const errorMessages = ((inputElement.dataset.errorMessage) || (inputElement.validationMessage));
+    showInputError(formElement, inputElement, errorMessages, settings);
   } else {
-    hideInputError(formElement, inputElement, inputErrorClass, errorClass);
+    hideInputError(formElement, inputElement, settings);
   }
 }; //  проверяем ваще норм ввели или нет
 
@@ -32,34 +27,36 @@ const hasInvalidInput = (inputList) => {
     })
 };
 
-const disableSubmitButton = (submitButton, inactiveButtonClass) => {
-    submitButton.classList.add(inactiveButtonClass);
+const disableSubmitButton = (submitButton, settings) => {
+    submitButton.classList.add(settings.inactiveButtonClass);
     submitButton.disabled = true;
 }
 
-const enableSubmitButton = (submitButton, inactiveButtonClass) => {
-    submitButton.classList.remove(inactiveButtonClass);
+const enableSubmitButton = (submitButton, settings) => {
+    submitButton.classList.remove(settings.inactiveButtonClass);
     submitButton.disabled = false;
 }
 
-const toggleButtonState = (inputList, submitButton, inactiveButtonClass) => {
+const toggleButtonState = (inputList, submitButton, settings) => {
   if (hasInvalidInput(inputList)) {
-    disableSubmitButton(submitButton, inactiveButtonClass);
+    disableSubmitButton(submitButton, settings);
   } else {
-    enableSubmitButton(submitButton, inactiveButtonClass);
+    enableSubmitButton(submitButton, settings);
   }
 }; // Шаманим с кнопкой Z Шаман Россия ZZZ ZOV 
 
-const setEventListeners = (formElement, inputErrorClass,errorClass,submitButton, inactiveButtonClass, inputSelector ) => {
-    const inputList = Array.from(formElement.querySelectorAll(inputSelector));
-    toggleButtonState(inputList, submitButton, inactiveButtonClass); // каждый раз прочекиваем, как говорилось в спринте
+const setEventListeners = (formElement, settings ) => {
+    const inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
+    toggleButtonState(inputList, submitButton, settings); // каждый раз прочекиваем, как говорилось в спринте
     inputList.forEach((inputElements) => {
         inputElements.addEventListener('input', () => {
-            checkInputValidity(formElement, inputElements, inputErrorClass, errorClass)
-            toggleButtonState(inputList, submitButton, inactiveButtonClass) // снова чек кнопочки
+            checkInputValidity(formElement, inputElements, settings);
+            toggleButtonState(inputList, submitButton, settings); // снова чек кнопочки
         });
     });
 };
+
+
 
 
 
