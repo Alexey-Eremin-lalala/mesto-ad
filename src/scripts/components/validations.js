@@ -13,9 +13,13 @@ const hideInputError = (formElement,inputElement, settings) => {
 } // прятаем ошибочку
 
 const checkInputValidity = (formElement, inputElement, settings) => {
+  if (inputElement.validity.patternMismatch) {
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+  } else {
+    inputElement.setCustomValidity('');
+  }
   if (!inputElement.validity.valid) {
-    const errorMessages = ((inputElement.dataset.errorMessage) || (inputElement.validationMessage));
-    showInputError(formElement, inputElement, errorMessages, settings);
+    showInputError(formElement,inputElement,inputElement.validationMessage,settings);
   } else {
     hideInputError(formElement, inputElement, settings);
   }
