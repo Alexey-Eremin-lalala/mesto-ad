@@ -47,6 +47,7 @@ const toggleButtonState = (inputList, submitButton, settings) => {
 
 const setEventListeners = (formElement, settings ) => {
     const inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
+    const submitButton = formElement.querySelector(settings.submitButtonSelector);
     toggleButtonState(inputList, submitButton, settings); // каждый раз прочекиваем, как говорилось в спринте
     inputList.forEach((inputElements) => {
         inputElements.addEventListener('input', () => {
@@ -56,8 +57,19 @@ const setEventListeners = (formElement, settings ) => {
     });
 };
 
+export const clearValidation = (formElement, settings) => {
+    const inputList = Array.form(formElement.querySelectorAll(settings.inputSelector));
+    const submitButton = formElement.querySelector(settings.submitButtonSelector);
+    inputList.forEach((inpElement) => {
+        hideInputError(formElement, inpElement, settings);
+    });
+    disableSubmitButton(submitButton, settings);
+}
 
+export const enableValidation = (settings) => {
+    const formList = Array.form(formElement.querySelectorAll(settings.formSelector));
+    formList.forEach((formElements) => {
+        setEventListeners(formElements, settings);
+    });
+};
 
-
-
-// тут далее будет часть для ValidationSettings, которые указаны в чек-листе))
