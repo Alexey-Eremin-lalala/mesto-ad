@@ -33,3 +33,31 @@ export const setUserInfo = ({ name, about }) => {
   }).then(getResponseData);
 };
 
+export const setUserAvatars = (avatarUrl) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: "PATCH",
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: avatarUrl
+    }),
+  }).then(getResponseData);
+};
+
+export const createNewCard = ({name, link}) => {
+  return fetch(`${config.baseUrl}/cards`, {
+    method: "POST",
+    headers: config.headers,
+    body: JSON.stringify({
+      name,
+      link,
+    }),
+  }).then(getResponseData);
+};
+
+export const removeMyCutyCard = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: "DELETE",
+    headers: config.headers,
+  }).then(getResponseData);
+};
+

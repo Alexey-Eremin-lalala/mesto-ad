@@ -5,8 +5,8 @@
 
   Из index.js не допускается что то экспортировать
 */
-import { getUserInfo, getCardList} from "./components/api.js";
-import { createCardElement, deleteCard, likeCard } from "./components/card.js";
+import { getUserInfo, getCardList, setUserAvatars, setUserInfo, createNewCard, removeMyCutyCard} from "./components/api.js";
+import { createCardElement, likeCard } from "./components/card.js";
 import { openModalWindow, closeModalWindow, setCloseModalWindowEventListeners } from "./components/modal.js";
 import { enableValidation} from "./components/validations.js";
 
@@ -72,33 +72,51 @@ const handleProfileFormSubmit = (evt) => {
       closeModalWindow(profileFormModalWindow);
     })
     .catch((err) => {
-      console.log(err);
+      console.log('Ошибка при поменянии имени профиля', err);
     });
 }; 
 
 const handleAvatarFromSubmit = (evt) => {
   evt.preventDefault();
-  profileAvatar.style.backgroundImage = `url(${avatarInput.value})`;
+
+  setUserAvatars(avatarInput.value)
+    .then((userData) => {
+      profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
   closeModalWindow(avatarFormModalWindow);
-};
+}).catch((err) => {
+      console.log('Ошибка при обновлении модной фотографии:', err);
+    }).finally(() => {
+      resetLoading(submitButton, initialText);
+    });};
 
 const handleCardFormSubmit = (evt) => {
   evt.preventDefault();
-  placesWrap.prepend(
-    createCardElement(
-      {
+
+    createNewCard({
+
         name: cardNameInput.value,
         link: cardLinkInput.value,
-      },
-      {
-        onPreviewPicture: handlePreviewPicture,
-        onLikeIcon: likeCard,
-        onDeleteCard: deleteCard,
-      }
-    )
-  );
 
+      }).then((cardInfo) =>{
+        placesWrap.prepend(
+          createCardElement(cardInfo, {
+            onPreviewPicture: handlePreviewPicture,
+            onLikeIcon: likeCard,
+            onDeleteCard: deleteCard,
+            onInfoClick: handleInfoClick,
+          }, true, false)
+        );
   closeModalWindow(cardFormModalWindow);
+}).catch((err) => { console.log('Ошибка при добавлении крутецкой карточки:', err)})};
+
+const deleteCard = (cardElement, cardId) => {
+  removeMyCutyCard(cardId)
+    .then(() => {
+      cardElement.remove();
+    })
+    .catch((err) => {
+      console.error('Не удалось удалить крутую карточку:', err);;
+    });
 };
 
 // EventListeners
@@ -132,6 +150,11 @@ Promise.all([getCardList(), getUserInfo()])
     cards.forEach((card) => {
       const idOwner = card.owner._id === userData._id
       const isLiked = card.likes.some(like => like._id === userData._id)
+      const cardElement = createCardElement(card, {
+    onPreviewPicture: handlePreviewPicture,
+    onLikeIcon: likeCard,
+    onDeleteCard: deleteCard,
+  });
       placesWrap.append(
         createCardElement(card, {
           onPreviewPicture: handlePreviewPicture,
