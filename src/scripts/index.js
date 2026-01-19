@@ -38,6 +38,7 @@ const avatarFormModalWindow = document.querySelector(".popup_type_edit-avatar");
 const avatarForm = avatarFormModalWindow.querySelector(".popup__form");
 const avatarInput = avatarForm.querySelector(".popup__input");
 
+
 // Создание объекта с настройками валидации
 const validationSettings = {
   formSelector: ".popup__form",
@@ -51,6 +52,13 @@ const validationSettings = {
 // включение валидации вызовом enableValidation
 // все настройки передаются при вызове
 enableValidation(validationSettings); 
+
+const formatDate = (date) =>
+  date.toLocaleDateString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
 const handlePreviewPicture = ({ name, link }) => {
   imageElement.src = link;
