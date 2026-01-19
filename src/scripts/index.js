@@ -5,11 +5,11 @@
 
   Из index.js не допускается что то экспортировать
 */
-
-import { initialCards } from "./cards.js";
+import { getUserInfo, getCardList} from "./components/api.js";
 import { createCardElement, deleteCard, likeCard } from "./components/card.js";
 import { openModalWindow, closeModalWindow, setCloseModalWindowEventListeners } from "./components/modal.js";
-import { enableValidation, clearValidation } from "./components/validations.js";
+import { enableValidation} from "./components/validations.js";
+
 
 // DOM узлы
 const placesWrap = document.querySelector(".places__list");
@@ -61,10 +61,20 @@ const handlePreviewPicture = ({ name, link }) => {
 
 const handleProfileFormSubmit = (evt) => {
   evt.preventDefault();
-  profileTitle.textContent = profileTitleInput.value;
-  profileDescription.textContent = profileDescriptionInput.value;
-  closeModalWindow(profileFormModalWindow);
-};
+
+  setUserInfo({
+    name: profileTitleInput.value,
+    about: profileDescriptionInput.value,
+  })
+    .then((userData) => {
+      profileTitle.textContent = userData.name;
+      profileDescription.textContent = userData.about;
+      closeModalWindow(profileFormModalWindow);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}; 
 
 const handleAvatarFromSubmit = (evt) => {
   evt.preventDefault();
@@ -112,19 +122,28 @@ openCardFormButton.addEventListener("click", () => {
   openModalWindow(cardFormModalWindow);
 });
 
-// отображение карточек
-initialCards.forEach((data) => {
-  placesWrap.append(
-    createCardElement(data, {
-      onPreviewPicture: handlePreviewPicture,
-      onLikeIcon: likeCard,
-      onDeleteCard: deleteCard,
-    })
-  );
-});
-
-//настраиваем обработчики закрытия попапов
 const allPopups = document.querySelectorAll(".popup");
 allPopups.forEach((popup) => {
   setCloseModalWindowEventListeners(popup);
 });
+
+Promise.all([getCardList(), getUserInfo()])
+  .then(([cards, userData]) => {
+    cards.forEach((card) => {
+      const idOwner = card.owner._id === userData._id
+      const isLiked = card.likes.some(like => like._id === userData._id)
+      placesWrap.append(
+        createCardElement(card, {
+          onPreviewPicture: handlePreviewPicture,
+          onLikeIcon: likeCard,
+          onDeleteCard: deleteCard,
+        }, idOwner, isLiked)
+      );
+    });
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileAvatar.style.backgroundImage = `url(${userData.avatar})` // Код отвечающий за отрисовку полученных данных
+  })
+  .catch((err) => {
+    console.log(err); // В случае возникновения ошибки выводим её в консоль
+  });

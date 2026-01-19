@@ -16,6 +16,12 @@ export const getUserInfo = () => {
   }).then(getResponseData);  // Проверяем успешность выполнения запроса
 }; 
 
+export const getCardList = () => {
+    return fetch(`${config.baseUrl}/cards`, {
+        headers: config.headers,
+    }).then(getResponseData);
+};
+
 export const setUserInfo = ({ name, about }) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
@@ -26,3 +32,4 @@ export const setUserInfo = ({ name, about }) => {
     }),
   }).then(getResponseData);
 };
+
