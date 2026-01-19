@@ -5,8 +5,8 @@
 
   Из index.js не допускается что то экспортировать
 */
-import { getUserInfo, getCardList, setUserAvatars, setUserInfo, createNewCard, removeMyCutyCard} from "./components/api.js";
-import { createCardElement, likeCard } from "./components/card.js";
+import { getUserInfo, getCardList, setUserAvatars, setUserInfo, createNewCard, removeMyCutyCard, changeLikeCardStatus} from "./components/api.js";
+import { createCardElement} from "./components/card.js";
 import { openModalWindow, closeModalWindow, setCloseModalWindowEventListeners } from "./components/modal.js";
 import { enableValidation} from "./components/validations.js";
 
@@ -73,7 +73,7 @@ const handleProfileFormSubmit = (evt) => {
     })
     .catch((err) => {
       console.log('Ошибка при поменянии имени профиля', err);
-    });
+    }).finally(() => {resetLoading(submitButton, initialText);});
 }; 
 
 const handleAvatarFromSubmit = (evt) => {
@@ -119,6 +119,20 @@ const deleteCard = (cardElement, cardId) => {
     });
 };
 
+const likeCard = (likeButton, cardId) => {
+  const isLiked = likeButton.classList.contains("card__like-button_is-active")
+  changeLikeCardStatus(cardId, isLiked)
+    .then((cardElement) => {
+      likeButton.classList.toggle("card__like-button_is-active")
+      const thisCard = likeButton.closest('.card')
+      const likeCount = thisCard.querySelector('.card__like-count')
+      likeCount.textContent = cardElement.likes.length;
+    })
+    .catch((err) => {
+      console.log('Вы не можете ничего поделать:', err);
+    });
+};
+
 // EventListeners
 profileForm.addEventListener("submit", handleProfileFormSubmit);
 cardForm.addEventListener("submit", handleCardFormSubmit);
@@ -150,11 +164,6 @@ Promise.all([getCardList(), getUserInfo()])
     cards.forEach((card) => {
       const idOwner = card.owner._id === userData._id
       const isLiked = card.likes.some(like => like._id === userData._id)
-      const cardElement = createCardElement(card, {
-    onPreviewPicture: handlePreviewPicture,
-    onLikeIcon: likeCard,
-    onDeleteCard: deleteCard,
-  });
       placesWrap.append(
         createCardElement(card, {
           onPreviewPicture: handlePreviewPicture,
