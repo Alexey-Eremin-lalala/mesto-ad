@@ -5,3 +5,10 @@
 Live-server является расширением VSCode
 
 ![плакать](https://data.chpic.su/stickers/t/tiktokbird/tiktokbird_015.webp)
+
+npm run dev
+
+npm run build
+
+npm run deploy 
+Необходимые команды, которые могут пригодиться

@@ -8,7 +8,7 @@
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Mesto</title>
-    <script type="module" crossorigin src="/assets/index-CVl0if0-.js"></script>
+    <script type="module" crossorigin src="/assets/index-C6jehFfc.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-SnSEsTOT.css">
   </head>
   <body class="page">
@@ -55,7 +55,9 @@
                 placeholder="Имя"
                 minlength="2"
                 maxlength="40"
-                data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+                pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]{2,40}$"
+                data-error-message="Воу, полегче, братик! Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+                required
                 
               />
               <span class="popup__error" id="user-name-error"></span>
@@ -69,6 +71,9 @@
                 placeholder="Занятие"
                 minlength="2"
                 maxlength="200"
+                required
+                pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]{2,200}$"
+                data-error-message="Длина точно должна быть от 2 до 200 символов, меня не обманешь!"
               />
               <span class="popup__error" id="user-description-error"></span>
             </label>
@@ -94,8 +99,14 @@
                 name="place-name"
                 id="place-name"
                 class="popup__input popup__input_type_card-name"
+                minlength="2"
+                maxlength="30"
+                pattern="^[A-Za-zА-Яа-яЁё\- ]{2,30}$"
                 placeholder="Название"
+                required
+                data-error-message="Братишка, это поле может включать только латинские и кириллические буквы,пробелы и дефисы, вводи не более 30 символов"
               />
+              <span class="popup__error" id="place-name-error"></span>
             </label>
             <label class="popup__label">
               <input
@@ -104,7 +115,12 @@
                 id="place-link"
                 class="popup__input popup__input_type_url"
                 placeholder="Ссылка на картинку"
+                required
+                pattern="https?://.+"
+                data-error-message="Братишка будь внимателен, вставляй сюда ссылку"
               />
+              <span class="popup__error" id="place-link-error"></span>
+
             </label>
             <button
               type="submit"
@@ -152,7 +168,11 @@
                 id="user-avatar"
                 class="popup__input popup__input_type_avatar"
                 placeholder="Ссылка на изображение"
+                required
+                pattern="https?://.+"
+                data-error-message="Братишка вставь сюда свой модный автопортрет"
               />
+              <span class="popup__error" id="user-avatar-error"></span>
             </label>
             <button
               type="submit"
